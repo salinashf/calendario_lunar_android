@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'componets/CarrucelCalendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'componets/calendar_custom.dart';
 
 void main() {
-  runApp(const App());
+  initializeDateFormatting('es_EC', null).then((_) => runApp(const App()));
 }
 
 class App extends StatelessWidget {
@@ -10,7 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Fases Lunares',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
