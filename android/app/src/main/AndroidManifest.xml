@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="calendario_lunar_android"
+        android:label="Fases Lunares 24/7"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
