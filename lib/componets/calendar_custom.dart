@@ -23,6 +23,8 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   late final Map<DateTime, MoonPhaseData> _yearMoonPhaseMap = {};
   late List<ListTile> _currentWidgetPhaseMoonMap = [];
   final EventList<Event> _markedDateMap = EventList<Event>(events: {});
+
+  String get titleHeaderParent => widget.titleHeader;
   Widget getIconCell(String emoji) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -145,7 +147,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
     }
     _yearMoonPhaseMap.forEach((fecha, datos) {
       DateTime eventDate = DateTime(fecha.year, fecha.month, fecha.day);
-      debugPrint("--$eventDate---");
+      //debugPrint("--$eventDate---");
       _markedDateMap.add(
         eventDate,
         Event(
@@ -166,7 +168,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
         title: Column(
           children: [
             Text(
-              'Calendario Fase Lunar',
+              titleHeaderParent,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(

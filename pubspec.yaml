@@ -39,6 +39,7 @@ dependencies:
   geoengine: ^1.0.3
   intl: ^0.20.2
   get: ^4.7.2
+  flutter_launcher_icons: ^0.14.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -49,7 +50,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon_app.jpg" # Ruta a tu ícono base
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
