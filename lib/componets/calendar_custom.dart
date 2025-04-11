@@ -15,31 +15,56 @@ class CarrucelCalendarPage extends StatefulWidget {
 }
 
 class CarrucelCalendarState extends State<CarrucelCalendarPage> {
-  final DateTime _currentDate = DateTime.now();
-  final DateTime _currentDate2 = DateTime.now();
+  final DateTime _markCurrentDate = DateTime.now();
+  final DateTime _minDateScroll = DateTime(DateTime.now().year, 1, 1);
+  final DateTime _maxDateScroll = DateTime(DateTime.now().year, 12, 31);
   String currentMonth = DateFormat.yMMM('es').format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
   late final Map<DateTime, MoonPhaseData> _yearMoonPhaseMap = {};
   late List<ListTile> _currentWidgetPhaseMoonMap = [];
   final EventList<Event> _markedDateMap = EventList<Event>(events: {});
-
   Widget getIconCell(String emoji) {
-    return Text(emoji);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          child: FittedBox(
+            fit: BoxFit.contain,
+            child: Text(
+              emoji,
+              style: TextStyle(fontSize: constraints.maxHeight),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget getIconCellPass(String emoji) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          child: Text(emoji),
+        );
+      },
+    );
   }
 
   Widget getIconMoonDefault() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment(-0.5, -0.6),
-          radius: 0.15,
-          colors: <Color>[
-            Color.fromARGB(255, 229, 8, 8),
-            Color.fromARGB(255, 17, 18, 51),
-          ],
-          stops: <double>[0.9, 1.0],
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 202, 193, 221),
+            shape: BoxShape.circle,
+          ),
+        );
+      },
     );
   }
 
@@ -106,9 +131,9 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
 
   @override
   void initState() {
-    DateTime startDate = _targetDateTime;
-    DateTime endDate = _targetDateTime;
-    while (startDate.year <= endDate.year + 1) {
+    DateTime startDate = DateTime(DateTime.now().year, 1, 1);
+    DateTime endDate = DateTime.now().add(Duration(days: 360));
+    while (startDate.year < endDate.year) {
       var moonData = MoonQuarter.searchMoonQuarter(startDate);
       MoonPhaseData datosFase = MoonPhaseData(
         quarter: moonData.quarter,
@@ -120,6 +145,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
     }
     _yearMoonPhaseMap.forEach((fecha, datos) {
       DateTime eventDate = DateTime(fecha.year, fecha.month, fecha.day);
+      debugPrint("--$eventDate---");
       _markedDateMap.add(
         eventDate,
         Event(
@@ -139,10 +165,17 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
       appBar: AppBar(
         title: Column(
           children: [
-            Text('Calendario Fase lunar..', style: TextStyle(fontSize: 16)),
+            Text(
+              'Calendario Fase Lunar',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             Text(
               DateFormat.yMMMM('es').format(_targetDateTime),
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(
+                fontSize: 14,
+                decoration: TextDecoration.underline,
+                decorationStyle: TextDecorationStyle.double,
+              ),
             ),
           ],
         ),
@@ -188,7 +221,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                 height: MediaQuery.of(context).size.height * 0.5,
                 //width: 300.0,
                 markedDatesMap: _markedDateMap,
-                selectedDateTime: _currentDate2,
+                selectedDateTime: _markCurrentDate,
                 targetDateTime: _targetDateTime,
                 customGridViewPhysics: NeverScrollableScrollPhysics(),
                 markedDateCustomShapeBorder: CircleBorder(
@@ -236,8 +269,8 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
 
                 todayButtonColor: Colors.yellow,
                 selectedDayTextStyle: TextStyle(color: Colors.yellow),
-                minSelectedDate: _currentDate.subtract(Duration(days: 360)),
-                maxSelectedDate: _currentDate.add(Duration(days: 360)),
+                minSelectedDate: _minDateScroll,
+                maxSelectedDate: _maxDateScroll,
                 prevDaysTextStyle: TextStyle(
                   fontSize: 16,
                   color: Colors.pinkAccent,
