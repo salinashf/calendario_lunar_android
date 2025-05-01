@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "calendario_lunar_android",
+            "name": "fases_lunares",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "calendario_lunar_android (profile mode)",
+            "name": "fases_lunares (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "calendario_lunar_android (release mode)",
+            "name": "fases_lunares (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

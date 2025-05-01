@@ -1,4 +1,4 @@
-package com.example.calendario_lunar_android
+package com.geniosdelmal.faseslunares
 
 import io.flutter.embedding.android.FlutterActivity
 
