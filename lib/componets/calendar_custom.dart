@@ -85,11 +85,11 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
           final keyDayMoon = entry.value;
           return ListTile(
             title: Text(
-              keyDayMoon.quarter,
+              keyDayMoon.quarterTlr,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             subtitle: Text(
-              "Día: ${keyDayMoon.full_time.date.day} Mes: ${DateFormat.yMMM('es').format(keyDayMoon.full_time.date)}",
+              "Día: ${keyDayMoon.fullTime.date.day} Mes: ${DateFormat.yMMM('es').format(keyDayMoon.fullTime.date)}",
             ),
             leading: Container(
               decoration: BoxDecoration(
@@ -145,7 +145,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
       var moonData = MoonQuarter.searchMoonQuarter(startDate);
       MoonPhaseData datosFase = MoonPhaseData(
         quarter: moonData.quarter,
-        full_time: moonData.time,
+        fullTime: moonData.time,
         quarterIndex: moonData.quarterIndex,
       );
       _yearMoonPhaseMap[DateTime(
