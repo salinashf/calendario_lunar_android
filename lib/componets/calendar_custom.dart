@@ -72,7 +72,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   }
 
   void loadTextWidgetCurrentPhase() {
-    debugPrint("loadTextWidgetCurrentPhase $_targetDateTime");
+    //debugPrint("loadTextWidgetCurrentPhase $_targetDateTime");
     // Filtrar las fases lunares del mes y año actuales
     final filteredPhases = _yearMoonPhaseMap.filterKeys((key) {
       return key.year == _targetDateTime.year &&
@@ -113,7 +113,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
         _targetDateTime.month - 1,
       );
       currentMonth = DateFormat.yMMM('es').format(_targetDateTime);
-      debugPrint("XX XX lastMonthEvent  ");
+      //debugPrint("XX XX lastMonthEvent  ");
       loadTextWidgetCurrentPhase();
     });
   }
