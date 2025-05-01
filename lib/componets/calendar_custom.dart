@@ -6,6 +6,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
 import 'package:geoengine/geoengine.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../model/moon_phase_data.dart';
+import 'package:dartx/dartx.dart';
 
 class CarrucelCalendarPage extends StatefulWidget {
   const CarrucelCalendarPage({super.key, required this.titleHeader});
@@ -71,34 +72,38 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   }
 
   void loadTextWidgetCurrentPhase() {
+    debugPrint("loadTextWidgetCurrentPhase $_targetDateTime");
+    // Filtrar las fases lunares del mes y año actuales
+    final filteredPhases = _yearMoonPhaseMap.filterKeys((key) {
+      return key.year == _targetDateTime.year &&
+          key.month == _targetDateTime.month;
+    });
+
+    // Mapear las fases filtradas a widgets ListTile
     _currentWidgetPhaseMoonMap =
-        _yearMoonPhaseMap.entries
-            .where(
-              (kfm) =>
-                  kfm.key.year == _targetDateTime.year &&
-                  kfm.key.month == _targetDateTime.month,
-            )
-            .map((entry) {
-              final datav = entry.value;
-              return ListTile(
-                title: Text(
-                  datav.quarterTlr,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                subtitle: Text(
-                  "Dia: ${datav.time.date.day} Mes: ${DateFormat.yMMM('es').format(datav.time.date)}",
-                ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue, width: 2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  padding: EdgeInsets.all(4),
-                  child: Text(datav.emoji, style: TextStyle(fontSize: 24)),
-                ),
-              );
-            })
-            .toList();
+        filteredPhases.entries.map((entry) {
+          final keyDayMoon = entry.value;
+          return ListTile(
+            title: Text(
+              keyDayMoon.quarter,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+            subtitle: Text(
+              "Día: ${keyDayMoon.full_time.date.day} Mes: ${DateFormat.yMMM('es').format(keyDayMoon.full_time.date)}",
+            ),
+            leading: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue, width: 2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                keyDayMoon.emoji,
+                style: const TextStyle(fontSize: 24),
+              ),
+            ),
+          );
+        }).toList();
   }
 
   void lastMonthEvent() {
@@ -108,6 +113,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
         _targetDateTime.month - 1,
       );
       currentMonth = DateFormat.yMMM('es').format(_targetDateTime);
+      debugPrint("XX XX lastMonthEvent  ");
       loadTextWidgetCurrentPhase();
     });
   }
@@ -139,10 +145,15 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
       var moonData = MoonQuarter.searchMoonQuarter(startDate);
       MoonPhaseData datosFase = MoonPhaseData(
         quarter: moonData.quarter,
-        time: moonData.time,
+        full_time: moonData.time,
         quarterIndex: moonData.quarterIndex,
       );
-      _yearMoonPhaseMap[startDate] = datosFase;
+      _yearMoonPhaseMap[DateTime(
+            moonData.time.date.year,
+            moonData.time.date.month,
+            moonData.time.date.day,
+          )] =
+          datosFase;
       startDate = moonData.time.date.add(Duration(days: 1));
     }
     _yearMoonPhaseMap.forEach((fecha, datos) {

@@ -2,14 +2,14 @@ import 'package:geoengine/geoengine.dart' show AstroTime;
 
 class MoonPhaseData {
   final String quarter;
-  final AstroTime time;
+  final AstroTime full_time;
   final int quarterIndex;
   late String emoji;
   late String quarterTlr;
   // Constructor
   MoonPhaseData({
     required this.quarter,
-    required this.time,
+    required this.full_time,
     required this.quarterIndex,
   }) {
     switch (quarterIndex) {
@@ -37,6 +37,6 @@ class MoonPhaseData {
   }
   @override
   String toString() {
-    return 'Quarter: $quarter, Time: $time.date.toString(), QuarterIndex: $quarterIndex';
+    return 'Quarter Moon : $quarter => Time: $full_time.date.toString() => QuarterIndex: $quarterIndex';
   }
 }
