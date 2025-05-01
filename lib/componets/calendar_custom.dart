@@ -89,7 +89,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             subtitle: Text(
-              "Día: ${keyDayMoon.fullTime.date.day} Mes: ${DateFormat.yMMM('es').format(keyDayMoon.fullTime.date)}",
+              " ${DateFormat.yMMMMd('es').format(keyDayMoon.fullTime.date)}",
             ),
             leading: Container(
               decoration: BoxDecoration(
