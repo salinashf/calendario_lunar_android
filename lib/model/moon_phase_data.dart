@@ -14,13 +14,13 @@ class MoonPhaseData {
   }) {
     switch (quarterIndex) {
       case 0:
-        emoji = "🌕"; //  new moon,
+        emoji = "🌑"; //  new moon,
         quarterTlr = "Luna Nueva";
       case 1:
         emoji = "🌓"; // Cuarto creciente
         quarterTlr = "Cuarto creciente";
       case 2:
-        emoji = "🌑"; // full moon
+        emoji = "🌕"; // full moon
         quarterTlr = "Luna Llena";
       case 3:
         emoji = "🌗"; // Cuarto menguante

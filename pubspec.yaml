@@ -41,6 +41,8 @@ dependencies:
   get: ^4.7.2
   flutter_launcher_icons: ^0.14.3
   dartx: ^1.2.0
+  moon_phase: 
+    path: ../moon_phase
 dev_dependencies:
   flutter_test:
     sdk: flutter
