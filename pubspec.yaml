@@ -43,6 +43,7 @@ dependencies:
   dartx: ^1.2.0
   moon_phase: 
     path: ../moon_phase
+  auto_size_text: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

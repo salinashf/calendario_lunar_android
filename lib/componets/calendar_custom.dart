@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
 import 'package:geoengine/geoengine.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:moon_phase/moon_widget.dart';
 import '../model/moon_phase_data.dart';
 import 'package:dartx/dartx.dart';
 
@@ -26,48 +28,78 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   final EventList<Event> _markedDateMap = EventList<Event>(events: {});
 
   String get titleHeaderParent => widget.titleHeader;
-  Widget getIconCell(String emoji) {
+
+  Widget getCellMoonPhaseMain(
+    String emoji,
+    String phaseName,
+    DateTime dayPhase,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: Text(
-              emoji,
-              style: TextStyle(fontSize: constraints.maxHeight),
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center, // Asegura alineación
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Text(
+                  phaseName,
+                  style: TextStyle(
+                    fontSize: constraints.maxHeight * 0.14,
+                    color: Colors.amber, // Tamaño relativo
+                  ),
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.fill,
+                child: Text(
+                  emoji,
+                  style: TextStyle(fontSize: constraints.maxHeight * 0.4),
+                ),
+              ),
+              AutoSizeText(
+                DateFormat.MMMMd('es').format(dayPhase).toString(),
+                maxLines: 2,
+                style: TextStyle(
+                  fontSize: constraints.maxHeight * 0.14,
+                  color: Colors.amber[800], // Tamaño relativo
+                ),
+              ), // Espacio entre los textos
+            ],
           ),
         );
       },
     );
   }
 
-  Widget getIconCellPass(String emoji) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SizedBox(
-          width: constraints.maxWidth,
-          height: constraints.maxHeight,
-          child: Text(emoji),
-        );
-      },
-    );
-  }
-
-  Widget getIconMoonDefault() {
+  Widget getMoonPhaseMain(DateTime dateCell) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 202, 193, 221),
-            shape: BoxShape.circle,
+            color: Colors.blueGrey,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(10),
           ),
         );
       },
+    );
+  }
+
+  Widget getMoonPhaseDefault(DateTime dateCell) {
+    //return Text("${dateCell.day}", style: TextStyle(color: Colors.black));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        MoonWidget(date: dateCell),
+        Text("${dateCell.day}", style: TextStyle(color: Colors.black)),
+      ],
     );
   }
 
@@ -164,7 +196,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
         Event(
           date: eventDate,
           title: datos.quarter,
-          icon: getIconCell(datos.emoji),
+          icon: getCellMoonPhaseMain(datos.emoji, datos.quarterTlr, eventDate),
         ),
       );
     });
@@ -225,9 +257,9 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
               ),
               child: CalendarCarousel<Event>(
                 todayBorderColor: Colors.green,
-                daysHaveCircularBorder: true,
+                daysHaveCircularBorder: false,
                 showOnlyCurrentMonthDate: false,
-                thisMonthDayBorderColor: Colors.grey,
+                thisMonthDayBorderColor: Colors.blueAccent,
                 weekFormat: false,
                 locale: 'es',
                 firstDayOfWeek: 1,
@@ -237,8 +269,9 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                 selectedDateTime: _markCurrentDate,
                 targetDateTime: _targetDateTime,
                 customGridViewPhysics: NeverScrollableScrollPhysics(),
-                markedDateCustomShapeBorder: CircleBorder(
-                  side: BorderSide(color: Colors.yellow),
+                markedDateCustomShapeBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(color: Colors.blue.shade900, width: 3),
                 ),
                 markedDateCustomTextStyle: TextStyle(
                   fontSize: 18,
@@ -272,11 +305,8 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                                       kfm.key.day == dateCell.day,
                                 )
                                 .isNotEmpty
-                            ? getIconMoonDefault()
-                            : Text(
-                              dateCell.day.toString(),
-                              style: TextStyle(color: Colors.black),
-                            ),
+                            ? getMoonPhaseMain(dateCell)
+                            : getMoonPhaseDefault(dateCell),
                   );
                 },
 

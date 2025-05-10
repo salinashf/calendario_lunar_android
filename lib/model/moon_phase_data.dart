@@ -18,16 +18,16 @@ class MoonPhaseData {
         quarterTlr = "Luna Nueva";
       case 1:
         emoji = "🌓"; // Cuarto creciente
-        quarterTlr = "Cuarto creciente";
+        quarterTlr = "Creciente";
       case 2:
         emoji = "🌕"; // full moon
         quarterTlr = "Luna Llena";
       case 3:
         emoji = "🌗"; // Cuarto menguante
-        quarterTlr = "Cuarto menguante";
+        quarterTlr = "Menguante";
       default:
         emoji = "🌑"; //  luna  genérica
-        quarterTlr = "Luna Generica";
+        quarterTlr = "Genérica";
     }
 
     ///      0 = new moon,
