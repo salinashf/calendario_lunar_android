@@ -28,8 +28,8 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   final EventList<Event> _markedDateMap = EventList<Event>(events: {});
 
   String get titleHeaderParent => widget.titleHeader;
-
-  Widget getCellMoonPhaseMain(
+  // para la celda cuado  cae en alguna fase de la luna
+  Widget getEventMoonPhaseMain(
     String emoji,
     String phaseName,
     DateTime dayPhase,
@@ -68,7 +68,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                   fontSize: constraints.maxHeight * 0.14,
                   color: Colors.amber[800], // Tamaño relativo
                 ),
-              ), // Espacio entre los textos
+              ),
             ],
           ),
         );
@@ -76,7 +76,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
     );
   }
 
-  Widget getMoonPhaseMain(DateTime dateCell) {
+  Widget getBoderMoonPhaseMain(DateTime dateCell) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
@@ -92,14 +92,38 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
     );
   }
 
+  // para la celda cuado no cae en ninguna fase de la luna
   Widget getMoonPhaseDefault(DateTime dateCell) {
-    //return Text("${dateCell.day}", style: TextStyle(color: Colors.black));
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        MoonWidget(date: dateCell),
-        Text("${dateCell.day}", style: TextStyle(color: Colors.black)),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            // Asegura alineación
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 5),
+                child: MoonWidget(
+                  date: dateCell,
+                  size: constraints.maxHeight * 0.52,
+                ),
+              ),
+              AutoSizeText(
+                dateCell.day.toString(),
+                maxLines: 2,
+                style: TextStyle(
+                  fontSize: constraints.maxHeight * 0.14,
+                  color: Colors.indigo[800], // Tamaño relativo
+                ),
+              ), // Espacio entre los textos
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -196,7 +220,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
         Event(
           date: eventDate,
           title: datos.quarter,
-          icon: getCellMoonPhaseMain(datos.emoji, datos.quarterTlr, eventDate),
+          icon: getEventMoonPhaseMain(datos.emoji, datos.quarterTlr, eventDate),
         ),
       );
     });
@@ -305,7 +329,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                                       kfm.key.day == dateCell.day,
                                 )
                                 .isNotEmpty
-                            ? getMoonPhaseMain(dateCell)
+                            ? getBoderMoonPhaseMain(dateCell)
                             : getMoonPhaseDefault(dateCell),
                   );
                 },

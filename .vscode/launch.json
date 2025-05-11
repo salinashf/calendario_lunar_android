@@ -20,6 +20,20 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "EDGE Release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "deviceId": "edge"
+        },
+        {
+            "name": "Navegador Default",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "deviceId": "web-server",
         }
     ]
 }
