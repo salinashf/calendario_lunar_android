@@ -12,22 +12,61 @@ import 'package:dartx/dartx.dart';
 
 class CarrucelCalendarPage extends StatefulWidget {
   const CarrucelCalendarPage({super.key, required this.titleHeader});
+
   final String titleHeader;
+
   @override
   State<CarrucelCalendarPage> createState() => CarrucelCalendarState();
 }
 
 class CarrucelCalendarState extends State<CarrucelCalendarPage> {
-  final DateTime _markCurrentDate = DateTime.now();
-  final DateTime _minDateScroll = DateTime(DateTime.now().year, 1, 1);
-  final DateTime _maxDateScroll = DateTime(DateTime.now().year, 12, 31);
   String currentMonth = DateFormat.yMMM('es').format(DateTime.now());
+
+  late List<ListTile> _currentWidgetPhaseMoonMap = [];
+  final DateTime _markCurrentDate = DateTime.now();
+  final EventList<Event> _markedDateMap = EventList<Event>(events: {});
+  final DateTime _maxDateScroll = DateTime(DateTime.now().year, 12, 31);
+  final DateTime _minDateScroll = DateTime(DateTime.now().year, 1, 1);
   DateTime _targetDateTime = DateTime.now();
   late final Map<DateTime, MoonPhaseData> _yearMoonPhaseMap = {};
-  late List<ListTile> _currentWidgetPhaseMoonMap = [];
-  final EventList<Event> _markedDateMap = EventList<Event>(events: {});
+
+  @override
+  void initState() {
+    DateTime startDate = DateTime(DateTime.now().year, 1, 1);
+    DateTime endDate = DateTime.now().add(Duration(days: 360));
+    while (startDate.year < endDate.year) {
+      var moonData = MoonQuarter.searchMoonQuarter(startDate);
+      MoonPhaseData datosFase = MoonPhaseData(
+        quarter: moonData.quarter,
+        fullTime: moonData.time,
+        quarterIndex: moonData.quarterIndex,
+      );
+      _yearMoonPhaseMap[DateTime(
+            moonData.time.date.year,
+            moonData.time.date.month,
+            moonData.time.date.day,
+          )] =
+          datosFase;
+      startDate = moonData.time.date.add(Duration(days: 1));
+    }
+    _yearMoonPhaseMap.forEach((fecha, datos) {
+      DateTime eventDate = DateTime(fecha.year, fecha.month, fecha.day);
+      //debugPrint("--$eventDate---");
+      _markedDateMap.add(
+        eventDate,
+        Event(
+          date: eventDate,
+          title: datos.quarter,
+          icon: getEventMoonPhaseMain(datos.emoji, datos.quarterTlr, eventDate),
+        ),
+      );
+    });
+    loadTextWidgetCurrentPhase();
+    super.initState();
+  }
 
   String get titleHeaderParent => widget.titleHeader;
+
   // para la celda cuado  cae en alguna fase de la luna
   Widget getEventMoonPhaseMain(
     String emoji,
@@ -40,33 +79,48 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center, // Asegura alineación
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: Text(
                   phaseName,
                   style: TextStyle(
-                    fontSize: constraints.maxHeight * 0.14,
+                    fontSize: constraints.maxHeight * 0.16,
                     color: Colors.amber, // Tamaño relativo
                   ),
                 ),
               ),
-              FittedBox(
-                fit: BoxFit.fill,
+              Container(
+                padding: const EdgeInsets.all(0.0),
                 child: Text(
                   emoji,
-                  style: TextStyle(fontSize: constraints.maxHeight * 0.4),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xFF000000)),
                 ),
               ),
-              AutoSizeText(
-                DateFormat.MMMMd('es').format(dayPhase).toString(),
-                maxLines: 2,
-                style: TextStyle(
-                  fontSize: constraints.maxHeight * 0.14,
-                  color: Colors.amber[800], // Tamaño relativo
+              Container(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(width: 1),
+                    bottom: BorderSide(width: 2),
+                  ),
+                  color: Colors.blueAccent,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 0,
+                  ),
+                  child: Text(
+                    DateFormat.MMMd('es').format(dayPhase).toString(),
+                    style: TextStyle(
+                      fontSize: constraints.maxHeight * 0.18,
+                      color: Colors.yellow,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -76,19 +130,26 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
     );
   }
 
-  Widget getBoderMoonPhaseMain(DateTime dateCell) {
+  Widget getBgCellMoonPhaseMain(DateTime dateCell) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           decoration: BoxDecoration(
-            color: Colors.blueGrey,
+            color: Colors.grey.shade600,
             shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
         );
       },
+    );
+  }
+
+  OutlinedBorder getBoderMoonPhaseMain() {
+    return RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(5),
+      side: BorderSide(color: Colors.blue.shade300, width: 1),
     );
   }
 
@@ -194,41 +255,6 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
   }
 
   @override
-  void initState() {
-    DateTime startDate = DateTime(DateTime.now().year, 1, 1);
-    DateTime endDate = DateTime.now().add(Duration(days: 360));
-    while (startDate.year < endDate.year) {
-      var moonData = MoonQuarter.searchMoonQuarter(startDate);
-      MoonPhaseData datosFase = MoonPhaseData(
-        quarter: moonData.quarter,
-        fullTime: moonData.time,
-        quarterIndex: moonData.quarterIndex,
-      );
-      _yearMoonPhaseMap[DateTime(
-            moonData.time.date.year,
-            moonData.time.date.month,
-            moonData.time.date.day,
-          )] =
-          datosFase;
-      startDate = moonData.time.date.add(Duration(days: 1));
-    }
-    _yearMoonPhaseMap.forEach((fecha, datos) {
-      DateTime eventDate = DateTime(fecha.year, fecha.month, fecha.day);
-      //debugPrint("--$eventDate---");
-      _markedDateMap.add(
-        eventDate,
-        Event(
-          date: eventDate,
-          title: datos.quarter,
-          icon: getEventMoonPhaseMain(datos.emoji, datos.quarterTlr, eventDate),
-        ),
-      );
-    });
-    loadTextWidgetCurrentPhase();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -287,16 +313,13 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                 weekFormat: false,
                 locale: 'es',
                 firstDayOfWeek: 1,
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.38,
                 //width: 300.0,
                 markedDatesMap: _markedDateMap,
                 selectedDateTime: _markCurrentDate,
                 targetDateTime: _targetDateTime,
                 customGridViewPhysics: NeverScrollableScrollPhysics(),
-                markedDateCustomShapeBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(color: Colors.blue.shade900, width: 3),
-                ),
+                markedDateCustomShapeBorder: getBoderMoonPhaseMain(),
                 markedDateCustomTextStyle: TextStyle(
                   fontSize: 18,
                   color: Colors.blue,
@@ -329,7 +352,7 @@ class CarrucelCalendarState extends State<CarrucelCalendarPage> {
                                       kfm.key.day == dateCell.day,
                                 )
                                 .isNotEmpty
-                            ? getBoderMoonPhaseMain(dateCell)
+                            ? getBgCellMoonPhaseMain(dateCell)
                             : getMoonPhaseDefault(dateCell),
                   );
                 },
